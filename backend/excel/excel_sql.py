@@ -9,3 +9,21 @@ INSERT INTO "Провод" {PROVOD}
 VALUES ({id_lep}, '{name}', {year}, {colcep}, '{dlpotr}', '{dlpocep}', '{dluchpotr}', '{dluchpocep}')
 RETURNING id
 """
+
+SQL_ADD_RES = """
+INSERT INTO "РЭС" {RES}
+VALUES ({num_set}, '{name_res}')
+RETURNING id
+"""
+
+SQL_ADD_PODSTANC = """
+INSERT INTO "Подстанция" {PODSTANC}
+VALUES ('{name}', {num_podst}, {year}, '{class_napr}', {id_res}, {id_set})
+RETURNING id
+"""
+
+SQL_ADD_TRANSFORM = """
+INSERT INTO "Трансформатор" {TRANSFORM}
+VALUES ({id_podst}, {year_izg}, {year_on}, '{type}', {nom_p}, '{techsost}', '{number}')
+RETURNING id
+"""
