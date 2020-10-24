@@ -36,12 +36,14 @@ def load_lep_table(answers):
                 col_dlpotr = i
             elif "по трассе" in str(answers[k][i]).lower() and "в том числе" in str(answers[k - 2][i]).lower():
                 col_dluchpotr = i
-            elif "по цепям" in str(answers[k][i]).lower() and "всего" in str(answers[k - 2][i-1]).lower():
+            elif ("по цепям" in str(answers[k][i]).lower() and "всего" in str(answers[k - 2][i - 1]).lower()) or (
+                        "длина в одноцепном" in str(answers[k][i]).lower()):
                 col_dlpocep = i
             elif "по цепям" in str(answers[k][i]).lower() and "в том числе" in str(answers[k - 2][i-1]).lower():
                 col_dluchpocep = i
             elif "марка" in str(answers[k][i]).lower() and (
-                        "провод" in str(answers[k - 1][i]).lower() or "провод" in str(answers[k - 1][i - 1]).lower()):
+                        "провод" in str(answers[k - 1][i]).lower() or "провод" in str(
+                    answers[k - 1][i - 1]).lower() or "провод" in str(answers[k - 1][i - 2]).lower()):
                 col_marka = i
             elif "техническое состояние" in str(answers[k][i]).lower() or "заключение, при-нятое по рез-там то" in str(
                 answers[k][i]).lower():
@@ -58,10 +60,19 @@ def load_lep_table(answers):
     dluchpocep = None
     disp_name = None
     napr = None
+    num_max = 30
     for i in range(len(answers)):
-        if i < 20:
+        if i < num_max:
+            try:
+                if col_god_vvoda is not None:
+                    if answers[i+1][col_god_vvoda] is not None:
+                        if int(answers[i+1][col_god_vvoda]) > 1800 and int(answers[i+1][col_god_vvoda]) < 2200:
+                            num_max = i
+            except:
+                continue
             if 'Сети' not in str(answers[i]) and '-' not in str(answers[i][col_marka]):
                 continue
+        num_max = i
         if 'Сети' in str(answers[i][0]):
             num_set = answers[i][0][5:]
             continue
@@ -129,5 +140,5 @@ def excel_load(file):
 
 # П_К_хар.ПС и ВЛ.xlsx
 
-excel_load('П_(ЛЭП)_2019_к_опросному_листу.xlsx')
+excel_load('П_К_хар.ПС и ВЛ.xlsx')
 
