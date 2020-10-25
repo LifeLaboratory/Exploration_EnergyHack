@@ -33,3 +33,9 @@ INSERT INTO "Сеть" {SETT}
 VALUES ({comp_id}, '{sett_name}')
 RETURNING id
 """
+
+SQL_FIND_SETT = """
+SELECT id
+FROM "Сеть"
+WHERE "Название" = '{sett_name}' AND "Компания" = {comp_id}
+"""

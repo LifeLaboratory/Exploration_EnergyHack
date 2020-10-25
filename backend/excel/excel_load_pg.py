@@ -83,13 +83,17 @@ def load_lep_table(answers, comp_id):
                 continue
         if 'Сети' in str(answers[i][0]):
             num_max = i
-            query_json_format = {
-                "SETT": str(SETT).replace("'", '"'),
-                "sett_name": answers[i][0],
-                "comp_id": comp_id
-            }
-            query = SQL_ADD_SETT.format(**query_json_format).replace("'None'", "NULL").replace("None", "NULL")
-            num_set = int(Sql.exec(query=query)[0]['id'])
+            sql_answer = Sql.exec(SQL_FIND_SETT.format(sett_name=answers[i][0], comp_id=comp_id))
+            try:
+                num_set = int(sql_answer[0]["id"])
+            except:
+                query_json_format = {
+                    "SETT": str(SETT).replace("'", '"'),
+                    "sett_name": answers[i][0],
+                    "comp_id": comp_id
+                }
+                query = SQL_ADD_SETT.format(**query_json_format).replace("'None'", "NULL").replace("None", "NULL")
+                num_set = int(Sql.exec(query=query)[0]['id'])
             continue
         if col_num_pp is not None:
             if answers[i][col_num_pp] is not None:
@@ -223,13 +227,17 @@ def load_res_table(answers, comp_id):
                 continue
         if 'Сети' in str(answers[i][0]):
             num_max = i
-            query_json_format = {
-                "SETT": str(SETT).replace("'", '"'),
-                "sett_name": answers[i][0],
-                "comp_id": comp_id
-            }
-            query = SQL_ADD_SETT.format(**query_json_format).replace("'None'", "NULL").replace("None", "NULL")
-            num_set = int(Sql.exec(query=query)[0]['id'])
+            sql_answer = Sql.exec(SQL_FIND_SETT.format(sett_name=answers[i][0], comp_id=comp_id))
+            try:
+                num_set = int(sql_answer[0]["id"])
+            except:
+                query_json_format = {
+                    "SETT": str(SETT).replace("'", '"'),
+                    "sett_name": answers[i][0],
+                    "comp_id": comp_id
+                }
+                query = SQL_ADD_SETT.format(**query_json_format).replace("'None'", "NULL").replace("None", "NULL")
+                num_set = int(Sql.exec(query=query)[0]['id'])
             continue
         if col_name_res is not None:
             if answers[i][col_name_res] is not None and name_res != answers[i][col_name_res]:
