@@ -4,13 +4,13 @@
       <div class="logo" />
       <a-menu theme="dark" mode="inline" :default-selected-keys="['1']">
         <a-menu-item key="1">
-          <router-link to="/profile">
+          <router-link to="/">
             <a-icon type="user" />
             <span>Создать компанию</span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">
-          <router-link to="/profile/list">
+          <router-link to="/list">
             <a-icon type="video-camera" />
             <span>Список компаний</span>
           </router-link>
@@ -42,7 +42,7 @@ export default {
   },
   methods: {
     goTo() {
-      router.push({path:'/profile/list'})
+      router.push({path:'/list'})
     }
   }
 };
