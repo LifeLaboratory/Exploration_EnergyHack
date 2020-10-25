@@ -11,8 +11,11 @@ import {
   Button,
   Upload,
   Collapse,
+  Spin,
   Card
  } from 'ant-design-vue'
+
+Vue.use(Spin)
 Vue.use(Collapse)
 Vue.use(Layout)
 Vue.use(Menu)

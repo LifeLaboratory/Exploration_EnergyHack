@@ -15,10 +15,6 @@
             <span>Список компаний</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="3">
-          <a-icon type="upload" />
-          <span>Экспорт</span>
-        </a-menu-item>
       </a-menu>
     </a-layout-sider>
     <a-layout>
