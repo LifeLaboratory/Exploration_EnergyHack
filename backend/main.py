@@ -8,6 +8,7 @@ import io
 from base.base_name import CORS_HEADERS
 from PC_report import generate_pc_report
 from LEP_report import generate_lep_report
+from word.word_output import create_word
 
 sys.path.append(os.getcwd()+'/../')
 sys.path.append(os.getcwd()+'../')
@@ -46,6 +47,16 @@ def lep_report(id_company):
         return flask.send_file(
                      io.BytesIO(bites.read()),
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ), CORS_HEADERS
+
+@_app.route('/api/word_report/<int:id_company>')
+def word_report(id_company):
+    create_word(id_company)
+    """Serves the logo image."""
+    with open("static/Итоговый_отчёт.docx", 'rb') as bites:
+        return flask.send_file(
+                     io.BytesIO(bites.read()),
+            mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         ), CORS_HEADERS
 
 

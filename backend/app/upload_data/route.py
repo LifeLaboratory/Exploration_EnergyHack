@@ -28,7 +28,7 @@ class UploadData(BaseRouter):
         new_file = open(name_file, "wb")
         new_file.write(file_data)
         new_file.close()
-        excel_load('new_file.xlsx', 4)
+        excel_load('new_file.xlsx', 1)
         return 'Ok', 200, names.CORS_HEADERS
 
     def options(self):

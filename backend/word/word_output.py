@@ -123,4 +123,4 @@ def create_word(comp_id):
         if kls > 0:
             proc = int(kls / kl * 10000) / 100
         doc.add_paragraph(text1.format(kab_dl=kls, proc=proc, kv=kv))
-    doc.save('../static/Итоговый_отчёт.docx')
+    doc.save('static/Итоговый_отчёт.docx')
