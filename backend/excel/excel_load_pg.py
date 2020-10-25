@@ -4,7 +4,7 @@ from excel.excel_base import *
 from excel.excel_sql import *
 
 
-def load_lep_table(answers):
+def load_lep_table(answers, comp_id):
     col_num_pp = None
     col_name_lep = None
     col_god_vvoda = None
@@ -64,17 +64,32 @@ def load_lep_table(answers):
     for i in range(len(answers)):
         if i < num_max:
             try:
-                if col_god_vvoda is not None:
-                    if answers[i+1][col_god_vvoda] is not None:
-                        if int(answers[i+1][col_god_vvoda]) > 1800 and int(answers[i+1][col_god_vvoda]) < 2200:
-                            num_max = i
+                if 'Сети' not in str(answers[i][0]):
+                    if col_god_vvoda is not None:
+                        if answers[i+1][col_god_vvoda] is not None:
+                            if int(answers[i+1][col_god_vvoda]) > 1800 and int(answers[i+1][col_god_vvoda]) < 2200:
+                                num_max = i
+                                query_json_format = {
+                                    "SETT": str(SETT).replace("'", '"'),
+                                    "sett_name": num_set,
+                                    "comp_id": comp_id
+                                }
+                                query = SQL_ADD_SETT.format(**query_json_format).replace("'None'", "NULL").replace(
+                                    "None", "NULL")
+                                num_set = int(Sql.exec(query=query)[0]['id'])
             except:
                 continue
             if 'Сети' not in str(answers[i]) and '-' not in str(answers[i][col_marka]):
                 continue
-        num_max = i
         if 'Сети' in str(answers[i][0]):
-            num_set = answers[i][0][5:]
+            num_max = i
+            query_json_format = {
+                "SETT": str(SETT).replace("'", '"'),
+                "sett_name": answers[i][0],
+                "comp_id": comp_id
+            }
+            query = SQL_ADD_SETT.format(**query_json_format).replace("'None'", "NULL").replace("None", "NULL")
+            num_set = int(Sql.exec(query=query)[0]['id'])
             continue
         if col_num_pp is not None:
             if answers[i][col_num_pp] is not None:
@@ -130,7 +145,7 @@ def load_lep_table(answers):
         Sql.exec(query=SQL_ADD_PROVOD.format(**query_json_format).replace("'None'", "NULL").replace("None", "NULL"))
 
 
-def load_res_table(answers):
+def load_res_table(answers, comp_id):
     col_name_res = None
     col_podst_num = None
     col_podst_name = None
@@ -186,21 +201,35 @@ def load_res_table(answers):
     for i in range(len(answers)):
         if i < num_max:
             try:
-                if col_transf_year_izg is not None and col_transf_year_on is not None:
-                    if answers[i+1][col_transf_year_izg] is not None and answers[i+1][col_transf_year_on]:
-                        if int(answers[i + 1][col_transf_year_izg]) > 1800 and int(
-                                answers[i + 1][col_transf_year_izg]) < 2200 and int(
-                                answers[i + 1][col_transf_year_on]) > 1800 and int(
-                                answers[i + 1][col_transf_year_on]) < 2200:
-                            num_max = i
+                if 'Сети' not in str(answers[i][0]):
+                    if col_transf_year_izg is not None and col_transf_year_on is not None:
+                        if answers[i+1][col_transf_year_izg] is not None and answers[i+1][col_transf_year_on]:
+                            if int(answers[i + 1][col_transf_year_izg]) > 1800 and int(
+                                    answers[i + 1][col_transf_year_izg]) < 2200 and int(
+                                    answers[i + 1][col_transf_year_on]) > 1800 and int(
+                                    answers[i + 1][col_transf_year_on]) < 2200:
+                                num_max = i
+                                query_json_format = {
+                                    "SETT": str(SETT).replace("'", '"'),
+                                    "sett_name": num_set,
+                                    "comp_id": comp_id
+                                }
+                                query = SQL_ADD_SETT.format(**query_json_format).replace("'None'", "NULL").replace(
+                                    "None", "NULL")
+                                num_set = int(Sql.exec(query=query)[0]['id'])
             except:
                 continue
             if 'Сети' not in str(answers[i]):
                 continue
-        num_max = i
         if 'Сети' in str(answers[i][0]):
-            num_set = answers[i][0][5:]
             num_max = i
+            query_json_format = {
+                "SETT": str(SETT).replace("'", '"'),
+                "sett_name": answers[i][0],
+                "comp_id": comp_id
+            }
+            query = SQL_ADD_SETT.format(**query_json_format).replace("'None'", "NULL").replace("None", "NULL")
+            num_set = int(Sql.exec(query=query)[0]['id'])
             continue
         if col_name_res is not None:
             if answers[i][col_name_res] is not None and name_res != answers[i][col_name_res]:
@@ -301,13 +330,16 @@ def load_res_table(answers):
                 Sql.exec(query=query)
 
 
-def excel_load(file):
+def excel_load(file, comp_id):
     answers = ep.parse_all_table(file)
     for answer in answers:
         if "лэп" in str(answer).lower():
-            load_lep_table(answer)
+            load_lep_table(answer, comp_id)
         if "трансфор" in str(answer).lower():
-            load_res_table(answer)
+            load_res_table(answer, comp_id)
 
-#excel_load('П_Н_Хар-ка тр-ров 110 кВ.xlsx')
-#excel_load('П_К_хар.ПС и ВЛ.xlsx')
+
+#excel_load('П_Н_Хар-ка действующих ВЛ и КЛ 110 кВ.xlsx', 1)
+#excel_load('П_(ЛЭП)_2019_к_опросному_листу.xlsx', 2)
+#excel_load('П_Н_Хар-ка тр-ров 110 кВ.xlsx', 1)
+#excel_load('П_К_хар.ПС и ВЛ.xlsx', 2)

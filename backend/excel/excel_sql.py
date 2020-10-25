@@ -27,3 +27,9 @@ INSERT INTO "Трансформатор" {TRANSFORM}
 VALUES ({id_podst}, {year_izg}, {year_on}, '{type}', {nom_p}, '{techsost}', '{number}')
 RETURNING id
 """
+
+SQL_ADD_SETT = """
+INSERT INTO "Сеть" {SETT}
+VALUES ({comp_id}, '{sett_name}')
+RETURNING id
+"""
