@@ -95,7 +95,7 @@ export default {
           })
       },
       goToCompany(id) {
-          this.$router.push({path: '/profile/detail/' + id})
+          this.$router.push({path: '/detail/' + id})
       }
   },
 };
