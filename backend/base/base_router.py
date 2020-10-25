@@ -2,6 +2,7 @@
 import json
 from flask_restful import Resource, reqparse
 from base import base_name as names
+import werkzeug
 
 
 class BaseRouter(Resource):
@@ -17,6 +18,13 @@ class BaseRouter(Resource):
         self.data = dict()
 
         self._parser = reqparse.RequestParser()
+
+    def get_file_data(self):
+        return reqparse.request.data
+
+    def read_data_json(self):
+        data_json = reqparse.request.data.decode('utf8').replace("'", '"')
+        return json.loads(data_json)
 
     def _read_args(self):
         """

@@ -18,5 +18,6 @@ def parse_table(file, sheet_name, range_first, range_last):
     last_row = len(pd.read_excel(file, sheet_name=sheet_name)) + 1
     data_excel = wb.sheets[sheet_name]
     data_pd = data_excel.range('{first}:{last}{row}'.format(first=range_first, last=range_last, row=last_row)).value
+    wb.close()
     return data_pd
 

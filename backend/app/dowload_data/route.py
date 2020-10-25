@@ -1,12 +1,11 @@
 # coding=utf-8
 from base import base_name as names
 from base.base_router import BaseRouter
-from .processor import *
-from json_loader import to_json
-from .update_data import update_data
+from PC_report import generate_pc_report
+import os
 
 
-class CompanyData(BaseRouter):
+class PCReport(BaseRouter):
     """
     Роут для работы с товарами
     """
@@ -16,12 +15,10 @@ class CompanyData(BaseRouter):
         self.args = ["НазваниеРодителя", "Тип_записи", "id", "Компания", "Название", "children"]
 
     def get(self, id_company):
-        result = get_company_data(id_company)
-        return result, 200, names.CORS_HEADERS
+        generate_pc_report(id_company)
+        return {'link': 'http://90.189.183.166:13451/static/Отчет_ПС_new.xlsx'}, 200, names.CORS_HEADERS
 
-    def post(self, id_company):
-        data = self.read_data_json()
-        update_data(data)
+    def post(self):
         return 'Ok', 200, names.CORS_HEADERS
 
     def options(self, id_company):

@@ -5,7 +5,7 @@ def get_networks(id_company):
     sql_query = f'''
     select
        "Компания"."Название" "НазваниеРодителя"
-    , 'Cеть' "ТипЗаписи"
+    , 'Cеть' "Тип_записи"
     ,  "Сеть".*
     from "Компания"
     left join "Сеть" on "Сеть"."Компания" = "Компания".id
@@ -17,10 +17,11 @@ def get_networks(id_company):
 def get_rec(id_network):
     sql_query = f'''
 select
-'РЭС' "ТипЗаписи"
+'РЭС' "Тип_записи"
 , *
 from "РЭС"
 where "Сеть" = {id_network}
+order by id
         '''
     return Sql.exec(query=sql_query)
 
@@ -28,10 +29,24 @@ where "Сеть" = {id_network}
 def get_pc(id_rec):
     sql_query = f'''
 select 
-'Подстанция' "ТипЗаписи"
+'Подстанция' "Тип_записи"
 , *
 from "Подстанция"
 where "РЭС" = {id_rec}
+order by id
+          '''
+    return Sql.exec(query=sql_query)
+
+
+def get_pc_w_rec(id_network):
+    sql_query = f'''
+select 
+'Подстанция' "Тип_записи"
+, *
+from "Подстанция"
+where "Сеть" = {id_network}
+and "РЭС" is NULL
+order by id
           '''
     return Sql.exec(query=sql_query)
 
@@ -40,10 +55,11 @@ def get_trans(id_pc):
     sql_query = f'''
 select 
 array[]::integer[] children
-, 'Трансформатор' "ТипЗаписи"
+, 'Трансформатор' "Тип_записи"
 , *
 from "Трансформатор"
 where "Подстанция" = {id_pc}
+order by id
       '''
     return Sql.exec(query=sql_query)
 
@@ -51,74 +67,60 @@ where "Подстанция" = {id_pc}
 def get_lep(id_network):
     sql_query = f'''
 select 
-'ЛЭП' "ТипЗаписи"
+'ЛЭП' "Тип_записи"
 , *
 from "ЛЭП"
 where "Сеть" = {id_network}
+order by id
           '''
     return Sql.exec(query=sql_query)
 
 
-def get_troc(id_lep):
+def get_provod(id_lep):
     sql_query = f'''
 select 
-array[]::integer[] children
-, 'Трос' "ТипЗаписи"
-, *
-from "Трос"
-where "ЛЭП" = {id_lep}
-          '''
-    return Sql.exec(query=sql_query)
-
-
-def get_opora(id_lep):
-    sql_query = f'''
-select 
- 'Опора' "ТипЗаписи"
-, *
-from "Опора"
-where "ЛЭП" = {id_lep}
-          '''
-    return Sql.exec(query=sql_query)
-
-
-def get_provod(id_opora):
-    sql_query = f'''
-select 
-'Провод' "ТипЗаписи"
+'Провод' "Тип_записи"
 , *
 from "Провод"
-where "Опора" = {id_opora}
+where "ЛЭП" = {id_lep}
+order by id
           '''
     return Sql.exec(query=sql_query)
 
 
 def get_company_data(id_company):
     networks = get_networks(id_company)
-    net = networks[0]
-    id_network = net.get('id')
+    net = {}
+    for net in networks:
+        # net = networks[0]
+        id_network = net.get('id')
 
-    rec = get_rec(id_network)
-    for r in rec:
-        id_rec = r.get('id')
-        pc = get_pc(id_rec)
-        for p in pc:
+        rec = get_rec(id_network) or []
+        for r in rec:
+            id_rec = r.get('id')
+            pc = get_pc(id_rec) or []
+            for p in pc:
+                id_pc = p.get('id')
+                trans = get_trans(id_pc)
+                p['children'] = trans
+            r['children'] = pc
+        net['children'] = rec
+
+        pc_w_rec = get_pc_w_rec(id_network)
+        for p in pc_w_rec:
             id_pc = p.get('id')
             trans = get_trans(id_pc)
             p['children'] = trans
-        r['children'] = pc
-    net['children'] = rec
+        net['children'] += pc_w_rec
 
-    lep = get_lep(id_network)
-    for l in lep:
-        id_lep = l.get('id')
-        troc = get_troc(id_lep)
-        opora = get_opora(id_lep)
-        for op in opora:
-            id_opora = op.get('id')
-            provod = get_provod(id_opora)
-            op['children'] = provod
-        l['children'] = troc
-        l['children'] += opora
-    net['children'] += lep
-    return net
+        lep = get_lep(id_network) or []
+        for l in lep:
+            id_lep = l.get('id')
+            opora = get_provod(id_lep) or []
+            l['children'] = opora
+            for op in opora:
+                id_opora = op.get('id')
+                provod = get_provod(id_opora) or []
+                op['children'] = provod
+        net['children'] += lep
+    return networks

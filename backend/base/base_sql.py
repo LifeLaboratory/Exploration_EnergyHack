@@ -94,7 +94,7 @@ class Sql:
         :return:
         """
         for k, v in args.items():
-            alert_items = ["'", '"', ';', '-', '*', 'drop', 'select', 'insert']
+            alert_items = ["'", '"', ';', '*', 'drop', 'select', 'insert']
             if isinstance(v, str):
                 for alert in alert_items:
                     if alert in v:

@@ -1,12 +1,11 @@
 # coding=utf-8
 from base import base_name as names
 from base.base_router import BaseRouter
-from .processor import *
-from json_loader import to_json
-from .update_data import update_data
+from LEP_report import generate_lep_report
+import os
 
 
-class CompanyData(BaseRouter):
+class LEPReport(BaseRouter):
     """
     Роут для работы с товарами
     """
@@ -16,12 +15,11 @@ class CompanyData(BaseRouter):
         self.args = ["НазваниеРодителя", "Тип_записи", "id", "Компания", "Название", "children"]
 
     def get(self, id_company):
-        result = get_company_data(id_company)
-        return result, 200, names.CORS_HEADERS
+        generate_lep_report(id_company)
 
-    def post(self, id_company):
-        data = self.read_data_json()
-        update_data(data)
+        return {'link': 'http://90.189.183.166:13451/static/Отчет_ЛЭП_new.xlsx'}, 200, names.CORS_HEADERS
+
+    def post(self):
         return 'Ok', 200, names.CORS_HEADERS
 
     def options(self, id_company):
